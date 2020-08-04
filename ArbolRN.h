@@ -1,4 +1,8 @@
-#include "Cola.h"
+/*
+Julieth Tatiana Riaño Mora - 20181020107
+Juan David Rosero Torres - 20181020071
+Cristian Camilo Martinez Rey 20181020021
+*/
 #include "pila.h"
 #include <iostream>
 #ifndef ARBOLRN_H     
@@ -13,8 +17,10 @@ class arbolRN{Nodo *raiz;
     pila<int> *listInorden;
     pila<int> *listPreorden;
 	pila<int> *listPosorden;
-	Nodo* buscarNodo(int clave);
-    public: arbolB(){raiz = NULL;
+	Nodo* buscar_nodo(int clave);
+	void  ajustarInsercion(Nodo *nodo);
+    public: arbolRN(){
+						raiz = NULL;
     					listInorden = new pila<int>; 
                         listPreorden = new pila<int>;
                         listPosorden = new pila<int>;}
@@ -28,18 +34,93 @@ class arbolRN{Nodo *raiz;
         void rotarIzquierda(int clave);
         void rotarDerecha(int clave);
         void imprimir();
-       	~arbolB();
+        void imprimir(int clave);
+       	//~arbolRN();
 };
-Nodo* arbolesRN::buscarNodo(int clave){
-	//Falta esta verga
+void arbolRN::ajustarInsercion(Nodo *nodo){
+	Nodo *aux, *padre, *tio, *abuelo = new Nodo;
+	padre=buscarpadre(nodo->info);
+	abuelo=buscarpadre(padre->info);
+	while(abuelo!=NULL){
+		if(padre->info == abuelo->der->info){
+		tio = abuelo->izq;
+		
+		}else{
+		if(padre->info == abuelo->izq->info){
+			tio = abuelo->der;
+			
+		}
+			
+		}
+		if(tio == NULL){
+				tio = new Nodo;
+				tio->info=-1;
+				tio->izq=NULL;
+				tio->der=NULL;
+				tio->color=true;
+		}
+	
+	
+	// CASO 1
+	if((padre->color == false) && (tio->color == false)){
+		cout<<"Entro a caso 1"<<endl;
+		padre->color=true;
+		tio->color = true;
+		if(abuelo->info != raiz->info){
+			abuelo->color=!abuelo->color;
+		}
+	}else{
+		//CASO 2
+		if((padre->color == false) && (tio->color == true) && (nodo->info < padre->info) && (tio->info < abuelo->info)){
+			cout<<"Entro a caso 2"<<endl;
+			rotarDerecha(padre->info);
+			aux=padre;
+			padre=nodo;
+			nodo=aux;
+		}else{
+			if((padre->color == false) && (tio->color == true) && (nodo->info > padre->info) && (tio->info > abuelo->info)){
+				cout<<"Entro a caso 2"<<endl;
+				rotarIzquierda(padre->info);
+				aux=padre;
+				padre=nodo;
+				nodo=aux;
+			}
+		}
+		
+		//CASO 3
+		if(((padre->color == false)&& (tio->color == true) )&&(((nodo->info > padre->info) && (tio->info < abuelo->info)) || ((nodo->info < padre->info) && (tio->info > abuelo->info)))){
+			cout<<"Entro a caso 3"<<endl;
+			padre->color=!padre->color;
+			abuelo->color=!abuelo->color;
+			if(tio->info < abuelo->info){
+				rotarIzquierda(abuelo->info);
+			}
+			if(tio->info > abuelo->info){
+				rotarDerecha(abuelo->info);
+			}
+			aux=abuelo;
+			abuelo=padre;
+			padre=aux;
+		}
+	}
+		nodo=padre;
+		padre=buscarpadre(nodo->info);
+		abuelo= buscarpadre(padre->info);
+	}
+	
+	
+
 }
+
 void arbolRN::insertar(int dato){
 	Nodo *arb,*pre, *aux = new Nodo;
 	aux->info=dato;
 	aux->izq=NULL;
 	aux->der=NULL;
+	aux->color=false;
 	if (raiz==NULL){
 		raiz=aux;
+		raiz->color=true;
 	}else {
 		arb=raiz;
 		while(arb != NULL){
@@ -56,12 +137,15 @@ void arbolRN::insertar(int dato){
 		}else {
 			pre->izq=arb;
 		}
+		ajustarInsercion(arb);
 	}
 }
 
-Nodo * arbolB::buscarpadre(int dato){
+Nodo * arbolRN::buscarpadre(int dato){
 	Nodo *aux= raiz;
 	pila<Nodo *> p;
+	if(aux->info == dato)
+	return NULL;
 	while(aux != NULL && aux->info != dato){
 		p.Push(aux);
 		if (dato>aux->info){
@@ -88,24 +172,33 @@ void arbolRN::imprimir(){
 	}
 	if (centro != NULL)
 	{
-		cout<<"Centro "<<centro->info<<endl;
+		cout<<"Centro "<<centro->info<<" Color "<<centro->color<<endl;
 	}
 	else {
 		cout<<"Centro "<<"Vacio"<<endl;	
 	}
 	if (izquierda != NULL)
 	{
-		cout<<"izquierda "<<izquierda->info<<endl;
+		cout<<"izquierda "<<izquierda->info<< " color: "<<izquierda->color<<endl;
 	}
 	else {
 		cout<<"izquierda "<<"Vacio"<<endl;	
 	}
 	if (derecha != NULL)
 	{
-		cout<<"derecha "<<derecha->info<<endl;
+		cout<<"derecha "<<derecha->info<<" Color: "<<derecha->color<<endl;
 	}
 	else {
 		cout<<"derecha "<<"Vacio"<<endl;
+	}
+}
+void arbolRN::imprimir(int clave){
+	cout<<"Impresion exacta "<<endl;
+	Nodo *aux= buscar_nodo(clave);
+	if(aux!= NULL){
+		cout<<"Nodo "<<aux->info<<"  Color "<<aux->color<<endl;
+	} else {
+		cout<<"No se encontro un nodo con "<<clave<<endl;
 	}
 }
 
@@ -187,15 +280,22 @@ Nodo *arbolRN::buscar_nodo(int dato){
 	
 }
 void arbolRN::eliminar(int dato){
-	Nodo *eliminado= buscar_nodo(dato),aux1,w;
-	Nodo *padre,padre1, *padreR, *hijoR =NULL;
+	Nodo *eliminado= buscar_nodo(dato),*aux1,*w;
+	Nodo *padre,*padre1, *padreR, *hijoR =NULL;
 	int valor;
 	aux1=eliminado;
 	//		Ajustar SupreionRN
-		while(aux1 != raiz and aux->color==true){	//Recordar True es negro y false es Rojo	Y aux1 es x en el pseudocodigo
+		while(aux1 != raiz and aux1->color==true){	//Recordar True es negro y false es Rojo	Y aux1 es x en el pseudocodigo
 			padre1=buscarpadre(aux1->info);
 			if(padre1->izq==aux1){
 				w=padre1->der;		//Que hacer si es nulo?
+				if(w == NULL){
+					w = new Nodo;
+					w->info=-1;
+					w->izq=NULL;
+					w->der=NULL;
+					w->color=true;
+				}
 				if(w->color==false){
 					//Caso 1
 					w->color=true;
@@ -260,7 +360,7 @@ void arbolRN::eliminar(int dato){
 	
 	//cout<<eliminado->info<<endl;
 	if(eliminado->der == NULL && eliminado->izq == NULL){
-		padre= buscar padre(dato);
+		padre= buscarpadre(dato);
 		if(eliminado->info > padre->info){
 			padre->der = NULL;
 		}else{
@@ -268,7 +368,7 @@ void arbolRN::eliminar(int dato){
 		}
 	}else if(eliminado->der != NULL && eliminado->izq == NULL){
 		eliminado->info=eliminado->der->info;
-		eliminado->der=NUll;
+		eliminado->der=NULL;
 	} else if(eliminado->der == NULL && eliminado->izq != NULL){
 		eliminado->info=eliminado->izq->info;
 		eliminado->izq=NULL;
