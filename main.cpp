@@ -35,13 +35,14 @@ int main(int argc, char** argv) {
 	arbol.imprimir(7);
 	arbol.imprimir(8);
 	cout<<endl;
-/*	cout<<"Eliminacion"<<endl;
-	cout<<endl<<endl;
-	arbol.eliminar(5);
-	arbol.imprimir();
-	//arbol.imprimir(3);*/
 	arbol.preorden();
 	arbol.inorden();
 	arbol.posorden();
+	cout<<endl;
+	cout<<"Eliminacion"<<endl;
+	cout<<endl;
+	arbol.eliminar(5);
+	arbol.imprimir();
+	//arbol.imprimir(3);
 	return 0;
 }

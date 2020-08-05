@@ -246,8 +246,7 @@ void arbolRN::posorden(){
 	cout<<"El recorrido en postorden es:"<<endl;
 	Nodo *aux=raiz;
 	Nodo *aux2=NULL;
-	aux2 = raiz;
-	while(!listPosorden->PilaVacia() || aux2 != NULL){
+	while(!listPosorden->PilaVacia() || aux != NULL){
 		if(aux != NULL){
 			listPosorden->Push(aux->info);
 			aux = aux->izq;
@@ -257,13 +256,12 @@ void arbolRN::posorden(){
 			if(aux3->der != NULL && aux2 != aux3->der){
 				aux = aux3->der;
 			}else{
-			
 				cout<<aux3->info;
 				aux2= buscar_nodo(listPosorden->Pop());
 			}
 		}     
-	}	
-	listPosorden->recorrer();
+	}
+	cout<<endl;
 }
 
 Nodo *arbolRN::buscar_nodo(int dato){
