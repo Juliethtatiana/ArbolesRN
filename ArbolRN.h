@@ -15,15 +15,14 @@ struct Nodo{int info;
 
 class arbolRN{Nodo *raiz;
     pila<int> *listInorden;
-    pila<int> *listPreorden;
+    pila<int> listPreorden;
 	pila<int> *listPosorden;
 	Nodo* buscar_nodo(int clave);
 	void  ajustarInsercion(Nodo *nodo);
     public: arbolRN(){
 						raiz = NULL;
-    					listInorden = new pila<int>; 
-                        listPreorden = new pila<int>;
-                        listPosorden = new pila<int>;}
+			listInorden = new pila<int>; 
+                        listPosorden = new pila<int>;    		}
 
         void insertar(int dato);
         Nodo *buscarpadre(int dato);
@@ -203,57 +202,64 @@ void arbolRN::imprimir(int clave){
 }
 
 void arbolRN::preorden(){
-	cout<<"Entro en preorden"<<endl;
+	Nodo *nodo= raiz;
+	cout<<"El recorrido en preorden es: "<<endl;
 	if(raiz == NULL){
 		cout << "El arbol esta vacio";
 	}else{
-		listPreorden->Push(raiz->info);
+		listPreorden.Push(nodo->info);
 		
-		while(!listPreorden->PilaVacia()){
-			listPreorden->Pop();
-			
-			if(raiz->der != NULL){
-				listPreorden->Push(raiz->der->info);
+		while(!listPreorden.PilaVacia()){
+			nodo=buscar_nodo(listPreorden.Pop());
+			cout<<nodo->info; //imprime el resultado en preorden
+			if(nodo->der != NULL){
+				listPreorden.Push(nodo->der->info);
 			}
-			if(raiz->izq != NULL){
-				listPreorden->Push(raiz->izq->info);
+			if(nodo->izq != NULL){
+				listPreorden.Push(nodo->izq->info);
 			}
 		}
 	}
-	listPreorden->recorrer();
 
+	cout<<endl;
 }
 
 void arbolRN::inorden(){
 	Nodo *aux;
 	aux = raiz;
-	cout<<"Entro en inorden"<<endl;
+	cout<<"El recorrido en inorden es:"<<endl;
 	while(!listInorden->PilaVacia() || aux != NULL){
 		if(aux != NULL){
 			listInorden->Push(aux->info);
 			aux = aux->izq;
 		}else{
-			listInorden->Pop();
+			aux= buscar_nodo(listInorden->Pop());
+			cout<<aux->info; //imprime el resultado en inorden
 			aux = aux->der;
 		}
+		
 	}
-	listInorden->recorrer();
+	cout<<endl;
 }
 
 void arbolRN::posorden(){
-	cout<<"Entro en postorden"<<endl;
-	Nodo *aux;
-	Nodo *aux2;
+	cout<<"El recorrido en postorden es:"<<endl;
+	Nodo *aux=raiz;
+	Nodo *aux2=NULL;
 	aux2 = raiz;
 	while(!listPosorden->PilaVacia() || aux2 != NULL){
-		if(aux2 != NULL){
-			listPosorden->Push(aux2->info);
-			aux2 = aux2->izq;
+		if(aux != NULL){
+			listPosorden->Push(aux->info);
+			aux = aux->izq;
 		}else{
-			if(aux2->der != NULL && aux != aux2->der){
-				aux2 = aux2->der;
+			Nodo *aux3 = buscar_nodo(listPosorden->Pop());
+			listPosorden->Push(aux3->info);
+			if(aux3->der != NULL && aux2 != aux3->der){
+				aux = aux3->der;
 			}else{
-				listPosorden->Push(aux->info);
+			
+				cout<<aux3->info;
+				aux2= buscar_nodo(listPosorden->Pop());
 			}
 		}     
 	}	
